@@ -1,7 +1,7 @@
 /**
  * Plant Waterer
  * Attach motor to motor shield channel A.
- * Attach soil capacitive sensor to A0.
+ * Attach soil capacitive sensor to A5.
  */
 
 #include "Motor.h"
@@ -20,14 +20,15 @@ void setup()
 
 void loop()
 {
-    motor.spinForward(255);
-
-    delay(1500);
-
-    motor.brake();
-
-    delay(3000);
-
+    // Desired moisture level is 0.32
     float val = moistureSensor.sense();
     Serial.println(val);
+
+    if (val > 0.32)
+    {
+        motor.spinForward(255);
+        delay(1500);
+        motor.brake();
+        delay(10000);
+    }
 }

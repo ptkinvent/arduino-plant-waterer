@@ -4,6 +4,8 @@
  * Attach soil capacitive sensor to A5.
  */
 
+#define PLOT 1
+
 #include <avr/interrupt.h>
 #include "Motor.h"
 #include "MoistureSensor.h"
@@ -35,18 +37,21 @@ void loop()
 {
     noInterrupts();
 
+#if PLOT == 0
     Serial.print("Current: ");
     Serial.print((1 - currentVal) * 100);
     Serial.print(" | ");
     Serial.print("Desired: ");
     Serial.print((1 - desiredVal) * 100);
     Serial.print(" | ");
-
+#endif
     interrupts();
 
     if (currentVal > desiredVal)
     {
+#if PLOT == 0
         Serial.println("Pumping...");
+#endif
         motor.spinForward(255);
         delay(1500);
         motor.brake();
@@ -54,7 +59,9 @@ void loop()
     }
     else
     {
+#if PLOT == 0
         Serial.println("No pump");
+#endif
         delay(1000);
     }
 }
@@ -64,6 +71,12 @@ void loop()
 ISR(TIMER1_COMPA_vect)
 {
     currentVal = moistureSensor.sense();
+#if PLOT == 0
     Serial.print("Sensing: ");
     Serial.println((1 - currentVal)*100);
+#else
+    Serial.print((1 - currentVal) * 100);
+    Serial.print(",");
+    Serial.println((1 - desiredVal) * 100);
+#endif
 }

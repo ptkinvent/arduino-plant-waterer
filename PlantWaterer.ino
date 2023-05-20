@@ -12,7 +12,7 @@
 
 MotorA motor;
 MoistureSensor moistureSensor(A5);
-float desiredVal = 0.28;
+float desiredVal = 0.63;
 float currentVal = desiredVal;
 
 
@@ -39,15 +39,15 @@ void loop()
 
 #if PLOT == 0
     Serial.print("Current: ");
-    Serial.print((1 - currentVal) * 100);
+    Serial.print(currentVal);
     Serial.print(" | ");
     Serial.print("Desired: ");
-    Serial.print((1 - desiredVal) * 100);
+    Serial.print(desiredVal);
     Serial.print(" | ");
 #endif
     interrupts();
 
-    if (currentVal > desiredVal)
+    if (currentVal < desiredVal)
     {
 #if PLOT == 0
         Serial.println("Pumping...");
@@ -73,10 +73,10 @@ ISR(TIMER1_COMPA_vect)
     currentVal = moistureSensor.sense();
 #if PLOT == 0
     Serial.print("Sensing: ");
-    Serial.println((1 - currentVal)*100);
+    Serial.println(currentVal);
 #else
-    Serial.print((1 - currentVal) * 100);
+    Serial.print(currentVal*100);
     Serial.print(",");
-    Serial.println((1 - desiredVal) * 100);
+    Serial.println(desiredVal*100);
 #endif
 }
